@@ -1,0 +1,290 @@
+-- Trickshares Universal Key System GUI
+
+if game.CoreGui:FindFirstChild("TricksharesKeySystem") then
+    game.CoreGui.TricksharesKeySystem:Destroy()
+end
+
+local screengui = Instance.new("ScreenGui")
+screengui.Name = "TricksharesKeySystem"
+screengui.ResetOnSpawn = false
+screengui.Parent = game.CoreGui
+
+local frame = Instance.new("Frame")
+frame.Name = "MainFrame"
+frame.Size = UDim2.new(0, 320, 0, 200)
+frame.Position = UDim2.new(0.5, -160, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+frame.BorderSizePixel = 0
+frame.Parent = screengui
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 18)
+
+-- Close Button
+local closebtn = Instance.new("TextButton")
+closebtn.Name = "CloseBtn"
+closebtn.Position = UDim2.new(0, 6, 0, 6)
+closebtn.Size = UDim2.new(0, 24, 0, 24)
+closebtn.Text = "✕"
+closebtn.Font = Enum.Font.SourceSansBold
+closebtn.TextColor3 = Color3.fromRGB(254, 75, 75)
+closebtn.TextSize = 20
+closebtn.BackgroundTransparency = 1
+closebtn.ZIndex = 2
+closebtn.Parent = frame
+closebtn.MouseButton1Click:Connect(function()
+    screengui:Destroy()
+end)
+
+-- Drag Handle
+local dragCircle = Instance.new("TextButton")
+dragCircle.Text = ""
+dragCircle.BackgroundColor3 = Color3.fromRGB(110, 170, 250)
+dragCircle.Size = UDim2.new(0, 24, 0, 24)
+dragCircle.Position = UDim2.new(1, -30, 0, 6)
+dragCircle.BorderSizePixel = 0
+dragCircle.Name = "DragHandle"
+dragCircle.Parent = frame
+dragCircle.TextTransparency = 1
+Instance.new("UICorner", dragCircle).CornerRadius = UDim.new(1,0)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "Trickshares Key System"
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 21
+title.TextColor3 = Color3.fromRGB(70, 210, 230)
+title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0,0,0,0)
+title.Parent = frame
+
+-- Error Label
+local errlabel = Instance.new("TextLabel")
+errlabel.Text = ""
+errlabel.Font = Enum.Font.SourceSansBold
+errlabel.TextSize = 17
+errlabel.TextColor3 = Color3.fromRGB(255,70,70)
+errlabel.BackgroundTransparency = 1
+errlabel.Position = UDim2.new(0, 0, 0, 40)
+errlabel.Size = UDim2.new(1, 0, 0, 30)
+errlabel.Parent = frame
+
+-- Key Box
+local keybox = Instance.new("TextBox")
+keybox.PlaceholderText = "Gib hier den Key ein"
+keybox.Font = Enum.Font.SourceSans
+keybox.TextSize = 16
+keybox.Text = ""
+keybox.BackgroundColor3 = Color3.fromRGB(23,23,23)
+keybox.TextColor3 = Color3.fromRGB(255,255,255)
+keybox.BorderSizePixel = 0
+keybox.Position = UDim2.new(0.1,0,0.4,0)
+keybox.Size = UDim2.new(0.8,0,0,30)
+keybox.Parent = frame
+Instance.new("UICorner", keybox).CornerRadius = UDim.new(0,8)
+
+-- Check Button
+local checkbtn = Instance.new("TextButton")
+checkbtn.Text = "Key bestätigen"
+checkbtn.Font = Enum.Font.SourceSansBold
+checkbtn.TextSize = 17
+checkbtn.BackgroundColor3 = Color3.fromRGB(80,170,250)
+checkbtn.TextColor3 = Color3.fromRGB(25,25,25)
+checkbtn.Position = UDim2.new(0.1,0,0.6,0)
+checkbtn.Size = UDim2.new(0.8,0,0,32)
+checkbtn.BorderSizePixel = 0
+checkbtn.Parent = frame
+Instance.new("UICorner", checkbtn).CornerRadius = UDim.new(0,8)
+
+-- Discord Button
+local discordbtn = Instance.new("TextButton")
+discordbtn.Text = "Kopiere Discord-Link (Credits)"
+discordbtn.Font = Enum.Font.SourceSans
+discordbtn.TextSize = 16
+discordbtn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+discordbtn.TextColor3 = Color3.fromRGB(200, 200, 255)
+discordbtn.Position = UDim2.new(0.1, 0, 0.8, 0)
+discordbtn.Size = UDim2.new(0.8,0,0,28)
+discordbtn.BorderSizePixel=0
+discordbtn.Parent = frame
+Instance.new("UICorner", discordbtn).CornerRadius = UDim.new(0,8)
+
+-- Drag Funktion KeySystem GUI
+local UserInputService = game:GetService("UserInputService")
+local dragging = false
+local dragInput, mousePos, framePos
+
+dragCircle.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        mousePos = input.Position
+        framePos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+dragCircle.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - mousePos
+        frame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X,
+                                   framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Key Check
+local GULTIGER_KEY = "TriksharV1."
+local function openMainGUI()
+    -- ★ Main GUI ★
+    local mainGUI = Instance.new("ScreenGui")
+    mainGUI.Name = "Trickshares"
+    mainGUI.Parent = game.CoreGui
+
+    local f = Instance.new("Frame")
+    f.Size = UDim2.new(0, 380, 0, 240)
+    f.Position = UDim2.new(0.5, -190, 0.5, -120)
+    f.BackgroundColor3 = Color3.fromRGB(40,40,50)
+    f.BorderSizePixel = 0
+    f.Parent = mainGUI
+    Instance.new("UICorner", f).CornerRadius = UDim.new(0,20)
+
+    local title = Instance.new("TextLabel")
+    title.Text = "By-Trickshares"
+    title.Font = Enum.Font.SourceSansBold
+    title.TextSize = 22
+    title.TextColor3 = Color3.fromRGB(140,200,255)
+    title.BackgroundTransparency = 1
+    title.Size = UDim2.new(1,0,0,40)
+    title.Parent = f
+
+    -- Drag Handle Main GUI
+    local dragCircleMain = Instance.new("TextButton")
+    dragCircleMain.Text = ""
+    dragCircleMain.BackgroundColor3 = Color3.fromRGB(110,170,250)
+    dragCircleMain.Size = UDim2.new(0,24,0,24)
+    dragCircleMain.Position = UDim2.new(1,-30,0,6)
+    dragCircleMain.BorderSizePixel = 0
+    dragCircleMain.Parent = f
+    dragCircleMain.TextTransparency = 1
+    Instance.new("UICorner", dragCircleMain).CornerRadius = UDim.new(1,0)
+
+    local draggingMain = false
+    local dragInputMain, mousePosMain, framePosMain
+    dragCircleMain.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            draggingMain = true
+            mousePosMain = input.Position
+            framePosMain = f.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    draggingMain = false
+                end
+            end)
+        end
+    end)
+    dragCircleMain.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInputMain = input
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInputMain and draggingMain then
+            local delta = input.Position - mousePosMain
+            f.Position = UDim2.new(framePosMain.X.Scale, framePosMain.X.Offset + delta.X,
+                                   framePosMain.Y.Scale, framePosMain.Y.Offset + delta.Y)
+        end
+    end)
+
+    -- ★ Hinweis GUI ★
+    local hintGUI = Instance.new("ScreenGui")
+    hintGUI.Name = "TricksharesHint"
+    hintGUI.Parent = game.CoreGui
+
+    local hintFrame = Instance.new("Frame")
+    hintFrame.Size = UDim2.new(0, 320, 0, 80)
+    hintFrame.Position = UDim2.new(0.7,0,0.4,0)
+    hintFrame.BackgroundColor3 = Color3.fromRGB(25,25,35)
+    hintFrame.BorderSizePixel = 0
+    hintFrame.Parent = hintGUI
+    Instance.new("UICorner", hintFrame).CornerRadius = UDim.new(0,15)
+
+    local hintLabel = Instance.new("TextLabel")
+    hintLabel.Text = "Drücke K, um das Menü zu öffnen/zu schließen | 00:10:000"
+    hintLabel.Font = Enum.Font.SourceSansBold
+    hintLabel.TextSize = 16
+    hintLabel.TextColor3 = Color3.fromRGB(200,200,255)
+    hintLabel.BackgroundTransparency = 1
+    hintLabel.Size = UDim2.new(1,0,0.5,0)
+    hintLabel.Position = UDim2.new(0,0,0,0)
+    hintLabel.Parent = hintFrame
+
+    local dragHintLabel = Instance.new("TextLabel")
+    dragHintLabel.Text = "Mit dem blauen Kreis kannst du das GUI verschieben!"
+    dragHintLabel.Font = Enum.Font.SourceSans
+    dragHintLabel.TextSize = 14
+    dragHintLabel.TextColor3 = Color3.fromRGB(150,200,255)
+    dragHintLabel.BackgroundTransparency = 1
+    dragHintLabel.Size = UDim2.new(1,0,0.5,0)
+    dragHintLabel.Position = UDim2.new(0,0,0.5,0)
+    dragHintLabel.Parent = hintFrame
+
+    -- Countdown 10s
+    spawn(function()
+        local totalTime = 10
+        local startTick = tick()
+        while tick() - startTick < totalTime do
+            local elapsed = tick() - startTick
+            local remaining = math.max(0, totalTime - elapsed)
+            local minutes = math.floor(remaining/60)
+            local seconds = math.floor(remaining%60)
+            local millis = math.floor((remaining - math.floor(remaining))*1000)
+            hintLabel.Text = string.format("Drücke K, um das Menü zu öffnen/zu schließen | %02d:%02d:%03d", minutes, seconds, millis)
+            wait(0.03)
+        end
+        hintGUI:Destroy()
+    end)
+
+    -- K-Taste Menü öffnen/schließen
+    local menuVisible = true
+    UserInputService.InputBegan:Connect(function(input, gpe)
+        if input.KeyCode == Enum.KeyCode.K then
+            menuVisible = not menuVisible
+            f.Visible = menuVisible
+        end
+    end)
+end
+
+local function verifyKey()
+    if keybox.Text == GULTIGER_KEY then
+        errlabel.TextColor3 = Color3.fromRGB(70,255,70)
+        errlabel.Text = "Key verifiziert."
+        wait(0.8)
+        screengui:Destroy()
+        openMainGUI()
+    else
+        errlabel.TextColor3 = Color3.fromRGB(255,70,70)
+        errlabel.Text = "Falscher Key, versuche es nochmal."
+        wait(1.2)
+        errlabel.Text = ""
+    end
+end
+
+checkbtn.MouseButton1Click:Connect(verifyKey)
+keybox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        verifyKey()
+    end
+end)
+
+discordbtn.MouseButton1Click:Connect(function()
+    setclipboard("https://discord.gg/wgFksqFpya")
+    discordbtn.Text = "Discord-Link kopiert!"
+    wait(1.2)
+    discordbtn.Text = "Kopiere Discord-Link (Credits)"
+end)
